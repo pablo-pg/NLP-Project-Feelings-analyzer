@@ -1,5 +1,7 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 # Proyecto sobre Procesamiento de Lenguaje Natural para Inteligencia Artificial Avanzada
-# Autor: Pablo Pérez González (alu0101318318@ull.edu.es)
+# Autor: Pablo Perez Gonzalez (alu0101318318@ull.edu.es)
 
 # import contextualSpellCheck
 import nltk
@@ -7,7 +9,7 @@ from nltk.stem import WordNetLemmatizer
 import pandas as pd
 import re
 import string
-import spacy
+# import spacy
 
 nltk.download('omw-1.4')
 nltk.download('stopwords')
@@ -18,7 +20,7 @@ from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
 lemmatizer = WordNetLemmatizer()
-nlp = spacy.load("en_core_web_sm")
+# nlp = spacy.load("en_core_web_sm")
 # contextualSpellCheck.add_to_pipe(nlp)
 
 def read_and_tokenize(rawMessages):
@@ -30,7 +32,7 @@ def read_and_tokenize(rawMessages):
     # Delete html tags
     message[0] = re.sub(r'<[^>]+>', '', message[0])
     # Delete emoji
-    message[0] = re.sub(r'(\uD83C[\uDDE6-\uDDFF]\uD83C[\uDDE6-\uDDFF])', '', message[0])
+    # message[0] = re.sub(r'(\uD83C[\uDDE6-\uDDFF]\uD83C[\uDDE6-\uDDFF])', '', message[0])
     # Delete usernames and hastags hastags
     message[0] = re.sub(r'(@[A-Za-z0-9]+)|(#[A-Za-z0-9]+)', '', message[0])
     # Every line will be tokenized into a word without taking into account the punctuation marks
