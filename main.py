@@ -37,7 +37,6 @@ correct = []
 
 for message in preProcessed:
   doc = nlp(preProcessed[0])
-  print(doc._.performed_spellCheck)
   # correct.append(doc._.outcome_spellCheck)
   if doc._.performed_spellCheck == False:
     for token in doc._.outcome_spellCheck:
