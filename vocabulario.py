@@ -1,17 +1,25 @@
 # Proyecto sobre Procesamiento de Lenguaje Natural para Inteligencia Artificial Avanzada
 # Autor: Pablo Pérez González (alu0101318318@ull.edu.es)
 
+# import contextualSpellCheck
 import nltk
+from nltk.stem import WordNetLemmatizer
 import pandas as pd
 import re
 import string
+import spacy
 
+nltk.download('omw-1.4')
 nltk.download('stopwords')
 nltk.download('punkt')
+nltk.download('wordnet')
 
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
+lemmatizer = WordNetLemmatizer()
+nlp = spacy.load("en_core_web_sm")
+# contextualSpellCheck.add_to_pipe(nlp)
 
 def read_and_tokenize(rawMessages):
   punctuation_marks = string.punctuation + '…' + '”' + '“' + '-' + '‘'+ '’' + '´' + '—' + '`'
@@ -38,7 +46,8 @@ def preprocessing_words(data):
       word = word.lower()
       # Stopwords will be ignored
       if (word not in en_stops):
-        output_list.add(word)
+        # word = lemmatizer.lemmatize(word)
+        output_list.add(lemmatizer.lemmatize(word))
   output_list = sorted(output_list)
   return output_list
 
