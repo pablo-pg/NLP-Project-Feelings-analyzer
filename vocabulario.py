@@ -15,17 +15,37 @@ nltk.download('omw-1.4')
 nltk.download('stopwords')
 nltk.download('punkt')
 nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 
 from nltk.corpus import stopwords
+from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
+
+def nltk_pos_tagger(nltk_tag):
+  if nltk_tag.startswith('J'):
+    return wordnet.ADJ
+  elif nltk_tag.startswith('V'):
+    return wordnet.VERB
+  elif nltk_tag.startswith('N'):
+    return wordnet.NOUN
+  elif nltk_tag.startswith('R'):
+    return wordnet.ADV
+  else:          
+    return None
+
 
 lemmatizer = WordNetLemmatizer()
 # nlp = spacy.load("en_core_web_sm")
 # contextualSpellCheck.add_to_pipe(nlp)
 
 def read_and_tokenize(rawMessages):
+  #{ Part-of-speech constants
+  ADJ, ADJ_SAT, ADV, NOUN, VERB = 'a', 's', 'r', 'n', 'v'
+  #}
+  POS_LIST = [NOUN, VERB, ADJ, ADV]
+  en_stops = set(stopwords.words('english'))
   punctuation_marks = string.punctuation + '…' + '”' + '“' + '-' + '‘'+ '’' + '´' + '—' + '`'
-  data = []
+  data = set()
   for message in rawMessages :
     # Delete links
     message[0] = re.sub(r'http\S+', '', message[0])
@@ -36,22 +56,19 @@ def read_and_tokenize(rawMessages):
     # Delete usernames and hastags hastags
     message[0] = re.sub(r'(@[A-Za-z0-9]+)|(#[A-Za-z0-9]+)', '', message[0])
     # Every line will be tokenized into a word without taking into account the punctuation marks
-    data += word_tokenize(message[0].translate(str.maketrans(dict.fromkeys(punctuation_marks, ' '))))
-  return data
-
-def preprocessing_words(data):
-  en_stops = set(stopwords.words('english'))
-  output_list = set()
-  for word in data:
-    # Only alphabetics strings will be processed
-    if (word.isalpha()):
-      word = word.lower()
-      # Stopwords will be ignored
+    message[0] = message[0].translate(str.maketrans(dict.fromkeys(punctuation_marks, ' ')))
+    
+    nltk_tagged = nltk.pos_tag(nltk.word_tokenize(message[0]))
+    wordnet_tagged = map(lambda x: (x[0], nltk_pos_tagger(x[1])), nltk_tagged)
+    for word, tag in wordnet_tagged:
       if (word not in en_stops):
-        # word = lemmatizer.lemmatize(word)
-        output_list.add(lemmatizer.lemmatize(word))
-  output_list = sorted(output_list)
-  return output_list
+        if (word.isalpha()):
+          word = word.lower()
+          if tag is None:
+            data.add(word)
+          else:        
+            data.add(lemmatizer.lemmatize(word, tag))
+  return sorted(data)
 
 
 def main():
@@ -60,10 +77,11 @@ def main():
   rawMessages = df[['Message']].to_numpy(dtype='str')
   output_file = 'vocabulario.txt'
   data_list = read_and_tokenize(rawMessages)
-  final_list = preprocessing_words(data_list)
+  # print(data_list)
+  # final_list = preprocessing_words(data_list)
   with open(output_file, 'w') as f:
-    f.write('Numero de palabras: %s\n' % len(final_list))
-    for item in final_list:
+    f.write('Numero de palabras: %s\n' % len(data_list))
+    for item in data_list:
       f.write("%s\n" % item)
 
 
