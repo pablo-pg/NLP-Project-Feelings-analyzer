@@ -92,19 +92,15 @@ def modelProcess(words, vocabulary, tweetsNumber, k):
     if word in result['corpus']:
       result['corpus'][word]['freq'] += 1
     else:
-      # result['corpus']['__unknown__']['freq'] += 1
       result['corpus'][word] = {'text': word, 'freq': 1, 'logProb': 0}
     wordsInMessages += 1
   
   result['wordsNumber'] = wordsInMessages
-  # print (wordsInMessages)
 
   for word in list(result['corpus']):
     if (word != '__unknown__'):
       if (result['corpus'][word]['freq'] <= k):
-        # print(word)
         result['corpus']['__unknown__']['freq'] += result['corpus'][word]['freq']
-        # print(result['corpus'][word]['freq'])
         del result['corpus'][word]
 
   for key in result['corpus']:
