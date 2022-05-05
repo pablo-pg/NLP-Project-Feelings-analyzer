@@ -91,7 +91,8 @@ def modelProcess(words, vocabulary, tweetsNumber, k):
     if word in result['corpus']:
       result['corpus'][word]['freq'] += 1
     else:
-      result['corpus']['__unknown__']['freq'] += 1
+      # result['corpus']['__unknown__']['freq'] += 1
+      result['corpus'][word] = {'text': word, 'freq': 1, 'logProb': 0}
     wordsInMessages += 1
   
   # print (wordsInMessages)
