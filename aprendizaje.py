@@ -21,6 +21,7 @@ from nltk.corpus import stopwords
 from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
 
+lemmatizer = WordNetLemmatizer()
 
 def nltk_pos_tagger(nltk_tag):
   if nltk_tag.startswith('J'):
@@ -34,7 +35,8 @@ def nltk_pos_tagger(nltk_tag):
   else:          
     return None
 
-lemmatizer = WordNetLemmatizer()
+
+
 
 def read_and_tokenize(rawMessages):
   #{ Part-of-speech constants
@@ -69,7 +71,9 @@ def read_and_tokenize(rawMessages):
   return sorted(data)
 
 
-def modelProcess(words, vocabulary, tweetsNumber):
+
+
+def modelProcess(words, vocabulary, tweetsNumber, k):
   result = {
     'tweetsNumber': tweetsNumber,
     'wordsNumber': 0,
@@ -132,11 +136,12 @@ def main():
 
   print("\nProcessing positive messages...\n")
 
-  positiveData = modelProcess(positiveWords, clonePos, len(rawPositiveMessages))
+  # k = 0 => Las palabras con 0 apariciones o menos se declararán como unknown
+  positiveData = modelProcess(positiveWords, clonePos, len(rawPositiveMessages), 0)
 
   print("\nProcessing negative messages...\n")
 
-  negativeData = modelProcess(negativeWords, cloneNeg, len(rawNegativeMessages))
+  negativeData = modelProcess(negativeWords, cloneNeg, len(rawNegativeMessages), 0)
 
   positiveFilename = 'modelo_lenguaje_P.txt'
   negativeFilename = 'modelo_lenguaje_N.txt'
