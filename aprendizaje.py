@@ -7,19 +7,20 @@
 import math
 import pandas as pd
 import re
+import nltk
 import string
-
-nltk.download('omw-1.4')
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
-nltk.download('averaged_perceptron_tagger')
 
 from copy import deepcopy
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet
 from nltk.tokenize import word_tokenize
+
+nltk.download('omw-1.4')
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
+nltk.download('averaged_perceptron_tagger')
 
 lemmatizer = WordNetLemmatizer()
 
@@ -95,8 +96,16 @@ def modelProcess(words, vocabulary, tweetsNumber, k):
       result['corpus'][word] = {'text': word, 'freq': 1, 'logProb': 0}
     wordsInMessages += 1
   
-  # print (wordsInMessages)
   result['wordsNumber'] = wordsInMessages
+  # print (wordsInMessages)
+
+  for word in list(result['corpus']):
+    if (word != '__unknown__'):
+      if (result['corpus'][word]['freq'] <= k):
+        # print(word)
+        result['corpus']['__unknown__']['freq'] += result['corpus'][word]['freq']
+        # print(result['corpus'][word]['freq'])
+        del result['corpus'][word]
 
   for key in result['corpus']:
     # Suavizado Laplaciano
@@ -120,7 +129,9 @@ def main():
   rawPositiveMessages = positiveDf[['Message']].to_numpy(dtype='str')
   rawNegativeMessages = negativeDf[['Message']].to_numpy(dtype='str')
 
+  print("\nPreprocessing positive messages...\n")
   positiveWords = read_and_tokenize(rawPositiveMessages)
+  print("\nPreprocessing negative messages...\n")
   negativeWords = read_and_tokenize(rawNegativeMessages)
 
   vocabulary = []
@@ -132,17 +143,20 @@ def main():
   
   vocabulary.pop(0)
 
-  clonePos = deepcopy(vocabulary)
-  cloneNeg = deepcopy(vocabulary)
+  # clonePos = deepcopy(vocabulary)
+  # cloneNeg = deepcopy(vocabulary)
+  clonePos = vocabulary
+  cloneNeg = vocabulary
 
   print("\nProcessing positive messages...\n")
 
-  # k = 0 => Las palabras con 0 apariciones o menos se declararán como unknown
-  positiveData = modelProcess(positiveWords, clonePos, len(rawPositiveMessages), 0)
+  # k = n => Las palabras con n apariciones o menos se declararán como __unknown__
+  k = 1
+  positiveData = modelProcess(positiveWords, clonePos, len(rawPositiveMessages), k)
 
   print("\nProcessing negative messages...\n")
 
-  negativeData = modelProcess(negativeWords, cloneNeg, len(rawNegativeMessages), 0)
+  negativeData = modelProcess(negativeWords, cloneNeg, len(rawNegativeMessages), k)
 
   positiveFilename = 'modelo_lenguaje_P.txt'
   negativeFilename = 'modelo_lenguaje_N.txt'
