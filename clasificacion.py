@@ -84,7 +84,7 @@ def read_and_tokenize(rawMessages):
 def processModel(fileLines):
   fileLines.pop(0)
   fileLines.pop(0)
-  data = []
+  data = {}
   # print(fileLines[0])
   # print()
   # print()
@@ -98,7 +98,7 @@ def processModel(fileLines):
 
     wordData['freq'] = int(splitted[3])
     wordData['logProb'] = float(splitted[-1])
-    data.append(wordData)
+    data[splitted[1]] = wordData
   return data
 
 
@@ -107,14 +107,26 @@ def  classify(messages, positiveModel, negativeModel):
   for message in messages:
     result.append({
       'text' : message[0:10],
-      'logProb': 0,
+      'posProb': 0,
+      'negProb': 0,
       'class':  None
     })
     posProb = 1
     negProb = 1
-    for word in message:
-      # posProb *=  positiveModel[0]
-      posProb += 1
+    splitMessage = message.split(' ')
+    for word in splitMessage:
+      if word in positiveModel and word in negativeModel:
+        posProb += positiveModel[word]['logProb']
+        negProb += negativeModel[word]['logProb']
+      else:
+        posProb += positiveModel['__unknown__']['logProb']
+        negProb += negativeModel['__unknown__']['logProb']
+    result[-1]['posProb'] = posProb
+    result[-1]['negProb'] = negProb
+    if posProb > negProb:
+      result[-1]['class'] = 'P'
+    else:
+      result[-1]['class'] = 'N'
   return result
 
 
@@ -151,9 +163,9 @@ def main():
   resumenFilename = 'resumen_alu0101318318.txt'
 
   with open(classificationFilename, 'w') as f:
-
+    print(classification[0])
     for item in classification:
-      f.write(f"{item['text']}, {item['logProb']}, {item['class']}\n")
+      f.write(f"{item['text']}, {item['posProb']}, {item['negProb']}, {item['class']}\n")
 
 
 
