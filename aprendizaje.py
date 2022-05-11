@@ -55,7 +55,7 @@ def read_and_tokenize(rawMessages):
     # Delete emoji
     # message[0] = re.sub(r'(\uD83C[\uDDE6-\uDDFF]\uD83C[\uDDE6-\uDDFF])', '', message[0])
     # Delete usernames and hastags hastags
-    message[0] = re.sub(r'(@[A-Za-z0-9]+)|(#[A-Za-z0-9]+)', '', message[0])
+    message[0] = re.sub(r'(@[A-Za-z0-9_.]+)|(#[A-Za-z0-9_]+)', '', message[0])
     # Every line will be tokenized into a word without taking into account the punctuation marks
     message[0] = message[0].translate(str.maketrans(dict.fromkeys(punctuation_marks, ' ')))
     
