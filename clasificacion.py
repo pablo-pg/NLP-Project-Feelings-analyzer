@@ -163,7 +163,7 @@ def checkError():
 
 
 def main():
-  mode = 0
+  mode = 1
   if mode == 1:
     print("\nLoading data to classify...\n")
     df = pd.read_excel(r"COV_test_sample.xlsx", header=None, dtype=str)
