@@ -69,7 +69,36 @@ def read_and_tokenize(rawMessages):
             data.append(word)
           else:        
             data.append(lemmatizer.lemmatize(word, tag))
-  return sorted(data)
+  return data
+
+
+
+
+def count_words(words, vocabulary):
+  result = {}
+
+  for word in vocabulary:
+    result[word] = 0
+
+  for word in words:
+    if word in result:
+      result[word] += 1
+    else:
+      print('Error, reading word that are not in the vocabulary:', word)
+      result[word] = 1
+  return result
+
+
+
+
+def fusion(words1, words2, k):
+  result = {}
+  for word in words1:
+    result[word] =  words1[word] + words2[word]
+    if result[word] <= k:
+      result['__unknown__'] = result[word]
+      del result[word]
+  return result
 
 
 
@@ -81,27 +110,25 @@ def modelProcess(words, vocabulary, tweetsNumber, k):
     'corpus': {}
   }
 
-  for word in vocabulary:
-    wordData = {'text': word, 'freq': 0, 'logProb': 0}
-    result['corpus'][word] = wordData
-
-  result['corpus']['__unknown__'] = {'text': '__unknown__', 'freq': 0, 'logProb': 0}
   wordsInMessages = 0
 
+  for word in vocabulary:
+    if word != '__unknown__':
+      wordData = {'text': word, 'freq': words[word], 'logProb': 0}
+      result['corpus'][word] = wordData
+      wordsInMessages += words[word]
+
+  result['corpus']['__unknown__'] = {'text': '__unknown__', 'freq': 0, 'logProb': 0}
+  
+
   for word in words:
-    if word in result['corpus']:
-      result['corpus'][word]['freq'] += 1
-    else:
-      result['corpus'][word] = {'text': word, 'freq': 1, 'logProb': 0}
-    wordsInMessages += 1
+    if word not in vocabulary:
+      # print(word)
+      wordsInMessages += words[word]
+      result['corpus']['__unknown__']['freq'] += words[word]
   
   result['wordsNumber'] = wordsInMessages
 
-  for word in list(result['corpus']):
-    if (word != '__unknown__'):
-      if (result['corpus'][word]['freq'] <= k):
-        result['corpus']['__unknown__']['freq'] += result['corpus'][word]['freq']
-        del result['corpus'][word]
 
   for key in result['corpus']:
     # Suavizado Laplaciano
@@ -139,20 +166,20 @@ def main():
   
   vocabulary.pop(0)
 
-  # clonePos = deepcopy(vocabulary)
-  # cloneNeg = deepcopy(vocabulary)
-  clonePos = vocabulary
-  cloneNeg = vocabulary
+  # k = n => Las palabras con n apariciones o menos se declararán como __unknown__
+  k = 3
+
+  positiveCount = count_words(positiveWords, vocabulary)
+
+  negativeCount = count_words(negativeWords, vocabulary)
+  
+  count = fusion(positiveCount, negativeCount, k)
 
   print("\nProcessing positive messages...\n")
-
-  # k = n => Las palabras con n apariciones o menos se declararán como __unknown__
-  k = 1
-  positiveData = modelProcess(positiveWords, clonePos, len(rawPositiveMessages), k)
+  positiveData = modelProcess(positiveCount, count, len(rawPositiveMessages), k)
 
   print("\nProcessing negative messages...\n")
-
-  negativeData = modelProcess(negativeWords, cloneNeg, len(rawNegativeMessages), k)
+  negativeData = modelProcess(negativeCount, count, len(rawNegativeMessages), k)
 
   positiveFilename = 'modelo_lenguaje_P.txt'
   negativeFilename = 'modelo_lenguaje_N.txt'
@@ -165,8 +192,8 @@ def main():
       f.write(f"Palabra: {positiveData['corpus'][item]['text']} Freq: {positiveData['corpus'][item]['freq']} LogProb: {positiveData['corpus'][item]['logProb']}\n")
 
   with open(negativeFilename, 'w') as f:
-    f.write('Numero de documentos (tweets) del corpus :%s\n' % negativeData['tweetsNumber'])
-    f.write('Número de palabras del corpus:%s\n' % negativeData['wordsNumber'])
+    f.write('Numero de documentos (tweets) del corpus: %s\n' % negativeData['tweetsNumber'])
+    f.write('Número de palabras del corpus: %s\n' % negativeData['wordsNumber'])
     for item in negativeData['corpus']:
       f.write(f"Palabra: {negativeData['corpus'][item]['text']} Freq: {negativeData['corpus'][item]['freq']} LogProb: {negativeData['corpus'][item]['logProb']}\n")
 
