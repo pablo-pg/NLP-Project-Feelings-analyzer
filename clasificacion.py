@@ -9,7 +9,6 @@ import re
 import nltk
 import string
 
-from copy import deepcopy
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
 from nltk.corpus import wordnet
