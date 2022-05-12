@@ -128,8 +128,8 @@ def  classify(messages, positiveModel, negativeModel):
 
 def checkError():
   print("\nLoading data to classify...\n")
-  # df = pd.read_excel(r"COV_test_g1_debug.xlsx",  sheet_name=0, dtype=str)
-  df = pd.read_excel(r"COV_test_g1_debug.xlsx", header=None, dtype=str)
+  # df = pd.read_excel(r"COV_test_g2_debug.xlsx",  sheet_name=0, dtype=str)
+  df = pd.read_excel(r"COV_test_g2_debug.xlsx", header=None, dtype=str)
   # rawMessages = df[['Message']].to_numpy(dtype='str')
   # expected = df[['Emotion']].to_numpy(dtype='str')
   rawMessages = df[[1]].to_numpy(dtype='str')
@@ -155,8 +155,19 @@ def checkError():
   for i in range(len(classification)):
     if classification[i]['class'] == expected[i][0][0:1]:
       hits += 1
-    # else:
-      # print()
+  classificationFilename = 'clasificacion_alu0101318318.txt'
+  
+  resumenFilename = 'resumen_alu0101318318.txt'
+
+  with open(classificationFilename, 'w') as f:
+    for item in classification:
+      formatPosProb = "{:.2f}".format(item['posProb'])
+      formatNegProb = "{:.2f}".format(item['negProb'])
+      f.write(f"{item['text']}, {formatPosProb}, {formatNegProb}, {item['class']}\n")
+
+  with open(resumenFilename, 'w') as f:
+    for item in classification:
+      f.write(f"{item['class']}\n")
   print('Error: ', hits / len(classification) * 100)
 
 
@@ -166,7 +177,7 @@ def main():
   mode = 1
   if mode == 1:
     print("\nLoading data to classify...\n")
-    df = pd.read_excel(r"COV_test_sample.xlsx", header=None, dtype=str)
+    df = pd.read_excel(r"COV_test_g2.xlsx", header=None, dtype=str)
     rawMessages = df.to_numpy(dtype='str')
 
     print('\nPreprocessing messages to clasify...\n')
