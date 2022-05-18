@@ -167,7 +167,7 @@ def main():
   vocabulary.pop(0)
 
   # k = n => Las palabras con n apariciones o menos se declararán como __unknown__
-  k = 3
+  k = 10
 
   positiveCount = count_words(positiveWords, vocabulary)
 
