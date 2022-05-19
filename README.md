@@ -1,4 +1,20 @@
-# IAA-NLP-Project
+# TFA Inteligencia Artificial Avanzada
+
+- [TFA Inteligencia Artificial Avanzada](#tfa-inteligencia-artificial-avanzada)
+- [Mediante probabilidades](#mediante-probabilidades)
+  - [Preprocesamiento](#preprocesamiento)
+  - [Librerías usadas](#librerías-usadas)
+  - [Programas](#programas)
+    - [`vocabulario.py`](#vocabulariopy)
+    - [`aprendizaje.py`](#aprendizajepy)
+    - [`clasificacion.py`](#clasificacionpy)
+- [Mediante redes neuronales](#mediante-redes-neuronales)
+  - [Preprocesamiento en redes neuronales](#preprocesamiento-en-redes-neuronales)
+  - [Librerías usadas con redes neuronales](#librerías-usadas-con-redes-neuronales)
+  - [Programa en redes neuronales](#programa-en-redes-neuronales)
+- [Author](#author)
+
+# Mediante probabilidades
 
 ## Preprocesamiento
 
@@ -31,8 +47,29 @@ A partir de los modelos, clasifica un conjunto de mensajes como positivos o nega
 
 Tiene dos modos, uno en el caso de que el fichero de entrada solo contenga mensajes y otro en el caso de que contenga el valor real de la clase (debug). En este último caso, muestra el error de las predicciones con el valor real. Actualmente, el acierto es sobre el 70%.
 
+# Mediante redes neuronales
 
+## Preprocesamiento en redes neuronales
 
-## Author
+Para el preprocesamiento se utiliza las librerías ***nltk*** y ***string***.  
+
+El paquete ***string*** se utiliza únicamente para la eliminación de signos de puntuación
+
+Por otro lado, ***nltk*** se utiliza para comprobar si son palabras claves y lematizar. Para eso, se tokeniza y se obtiene el tipo de palabra (adj, adv, verb, noun). Tras esto, con la palabra y el token de su tipo, se lematiza y se sustituye la palara original por la tokenizada. Solo se va a lematizar en el caso de que la palabra no sea una palabra clave (p. ej. *a*, *is*, *do*, *however*, etc.) y no contenga números. En el caso de que no sea posible la lematización (es un nombre propio o palabras de índole social como *xd*, *lol*, *hahaha*), se añaden al vocabulario sin modificar.
+
+## Librerías usadas con redes neuronales
+
+- **nltk** para la tokenización y lematización
+- **sklearn** para el aprendizaje y predicción mediante redes neuronales
+- **pandas** para la lectura del dataframe y la división del mismo por clases (`aprendizaje.py`)
+- **string** para el tratamiento de las cadenas de texto, saber si contiene números y pasar a minúsculas
+- **numpy** para la transformación de dataframe a array convencional
+
+## Programa en redes neuronales
+
+Primero se importa el conjunto de datos de entrenamiento y se genera un vector TfidfVectorizer, donde se especifica que se usarán unigramas (ngram_range) y que la K (número de repeticiones para que no se considere \<unk\>) valdrá 1 (min_df). Posteriormente se crea un modelo linear, que será especificamente LogisticRegression. Se entrena y posteriormente se clasifica el corpus de testeo. En el caso de que el corpus de testeo contenga el resultado real, se ejecutará una función que calcule la precisión del modelo. En el caso de que no se tenga, se clasificará y se generarán los ficheros clasificacion_XXX.txt y resumen_XXX.txt
+
+# Author
+
 Pablo Pérez González  
 alu0101318318@ull.edu.es

@@ -110,8 +110,8 @@ if len(df.columns) >= 2:
 else:
   print('Clasificando')
   classification = classifyDf()
-  classificationFilename = 'clasificacion_2_alu0101318318.txt'
-  resumenFilename = 'resumen_2_alu0101318318.txt'
+  classificationFilename = 'clasificacion_alu0101318318.txt'
+  resumenFilename = 'resumen_alu0101318318.txt'
 
   with open(classificationFilename, 'w') as f:
     for item in classification:
