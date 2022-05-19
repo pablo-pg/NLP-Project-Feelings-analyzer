@@ -19,7 +19,7 @@ def normalize(datas):
   return result
 
 
-df = pd.read_excel(r"COV_train.xlsx",  sheet_name=0, dtype=str)
+df = pd.read_excel(r"../COV_train.xlsx",  sheet_name=0, dtype=str)
 rawMessages = df[['Message']].to_numpy(dtype='str')
 data = normalize(rawMessages)
 target = normalize(df[['Emotion']].to_numpy(dtype='str'))
@@ -68,11 +68,11 @@ clf.score(vect_X, target)*100
 print('Modelo entrenado')
 
 
-# df = pd.read_excel(r"COV_test_g2_debug.xlsx", header=None, dtype=str)
+# df = pd.read_excel(r"../COV_test_g2_debug.xlsx", header=None, dtype=str)
 # rawMessages = df[[1]].to_numpy(dtype='str')
 # expected = df[[2]].to_numpy(dtype='str')
 # target = normalize(expected)
-df = pd.read_excel(r"COV_test_g2.xlsx", header=None, dtype=str)
+df = pd.read_excel(r"../COV_test_g2.xlsx", header=None, dtype=str)
 rawMessages = df.to_numpy(dtype='str')
 
 data = normalize(rawMessages)

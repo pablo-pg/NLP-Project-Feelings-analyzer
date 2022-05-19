@@ -144,7 +144,7 @@ def modelProcess(words, vocabulary, tweetsNumber, k):
 
 def main():
   print("\nLoading...\n")
-  df = pd.read_excel(r"COV_train.xlsx", sheet_name=0, dtype=str)
+  df = pd.read_excel(r"../COV_train.xlsx", sheet_name=0, dtype=str)
   mask = (df['Emotion'] == "Negative")
   negativeDf = df[mask]
   positiveDf = df[~mask]

@@ -73,7 +73,7 @@ def read_and_tokenize(rawMessages):
 
 def main():
   print("\nLoading...\n")
-  df = pd.read_excel(r"COV_train.xlsx", sheet_name=0, dtype=str)
+  df = pd.read_excel(r"../COV_train.xlsx", sheet_name=0, dtype=str)
   rawMessages = df[['Message']].to_numpy(dtype='str')
   output_file = 'vocabulario.txt'
   data_list = read_and_tokenize(rawMessages)

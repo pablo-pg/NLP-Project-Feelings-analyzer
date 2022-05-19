@@ -127,8 +127,8 @@ def  classify(messages, positiveModel, negativeModel):
 
 def checkError():
   print("\nLoading data to classify...\n")
-  # df = pd.read_excel(r"COV_test_g2_debug.xlsx",  sheet_name=0, dtype=str)
-  df = pd.read_excel(r"COV_test_g2_debug.xlsx", header=None, dtype=str)
+  # df = pd.read_excel(r"../COV_test_g2_debug.xlsx",  sheet_name=0, dtype=str)
+  df = pd.read_excel(r"../COV_test_g2_debug.xlsx", header=None, dtype=str)
   # rawMessages = df[['Message']].to_numpy(dtype='str')
   # expected = df[['Emotion']].to_numpy(dtype='str')
   rawMessages = df[[1]].to_numpy(dtype='str')
@@ -176,7 +176,7 @@ def main():
   mode = 1
   if mode == 1:
     print("\nLoading data to classify...\n")
-    df = pd.read_excel(r"COV_test_g2.xlsx", header=None, dtype=str)
+    df = pd.read_excel(r"../COV_test_g2.xlsx", header=None, dtype=str)
     rawMessages = df.to_numpy(dtype='str')
 
     print('\nPreprocessing messages to clasify...\n')
